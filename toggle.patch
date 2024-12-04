@@ -1,0 +1,36 @@
+From 8cd3bf90228e1e2bf4bae4799ee9a827420794bc Mon Sep 17 00:00:00 2001
+From: Josh <jokajak@gmail.com>
+Date: Fri, 5 Jul 2024 21:30:05 -0400
+Subject: [PATCH] feat: introduce VirtColumnToggle
+
+This introduces a simple command to toggle the virtual column for a
+buffer.
+
+Fixes: #9
+---
+ lua/virt-column/init.lua | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/lua/virt-column/init.lua b/lua/virt-column/init.lua
+index c957c71..846d789 100644
+--- a/lua/virt-column/init.lua
++++ b/lua/virt-column/init.lua
+@@ -168,4 +168,18 @@ M.setup_buffer = function(bufnr, config)
+     conf.set_buffer_config(bufnr, config)
+ end
+ 
++--- Toggle virt-column for one buffer
++---
++---@param bufnr number
++M.toggle_buffer = function(bufnr)
++    assert(M.initialized, "Tried to setup buffer without doing global setup")
++    bufnr = utils.get_bufnr(bufnr)
++    local config = conf.get_config(bufnr)
++    M.update { enabled = not config.enabled }
++end
++
++vim.api.nvim_create_user_command("VirtColumnToggle", function()
++    M.toggle_buffer(0)
++end, {})
++
+ return M
